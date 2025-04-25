@@ -638,8 +638,10 @@ export default class imageAutoUploadPlugin extends Plugin {
           const urlPath = uploadUrl.split('?')[0];
           // Extract the filename with extension
           const filenameWithExt = urlPath.split('/').pop() || '';
+          // Decode URL-encoded characters (especially for Chinese)
+          const decodedFilename = decodeURIComponent(filenameWithExt);
           // Remove extension
-          const filenameWithoutExt = filenameWithExt.replace(/\.[^/.]+$/, '');
+          const filenameWithoutExt = decodedFilename.replace(/\.[^/.]+$/, '');
           return filenameWithoutExt + imageSizeSuffix;
         } catch (e) {
           console.error('Failed to extract filename from URL', e);
