@@ -236,7 +236,7 @@ export default class imageAutoUploadPlugin extends Plugin {
         let uploadUrlList = res.result;
         imageList.map(item => {
           const uploadImage = uploadUrlList.shift();
-          let name = this.handleName(item.name);
+          let name = this.handleName(item.name, uploadImage);
 
           content = content.replaceAll(
             item.source,
@@ -390,7 +390,7 @@ export default class imageAutoUploadPlugin extends Plugin {
         imageList.map(item => {
           const uploadImage = uploadUrlList.shift();
 
-          let name = this.handleName(item.name);
+          let name = this.handleName(item.name, uploadImage);
           content = content.replaceAll(
             item.source,
             `![${name}](${uploadImage})`
@@ -454,7 +454,7 @@ export default class imageAutoUploadPlugin extends Plugin {
                     let uploadUrlList = res.result;
                     imageList.map(item => {
                       const uploadImage = uploadUrlList.shift();
-                      let name = this.handleName(item.name);
+                      let name = this.handleName(item.name, uploadImage);
 
                       value = value.replaceAll(
                         item.source,
@@ -594,7 +594,7 @@ export default class imageAutoUploadPlugin extends Plugin {
     name: string = ""
   ) {
     let progressText = imageAutoUploadPlugin.progressTextFor(pasteId);
-    name = this.handleName(name);
+    name = this.handleName(name, imageUrl);
 
     let markDownImage = `![${name}](${imageUrl})`;
 
@@ -616,7 +616,7 @@ export default class imageAutoUploadPlugin extends Plugin {
     );
   }
 
-  handleName(name: string) {
+  handleName(name: string, uploadUrl?: string) {
     const imageSizeSuffix = this.settings.imageSizeSuffix || "";
 
     if (this.settings.imageDesc === "origin") {
@@ -627,6 +627,26 @@ export default class imageAutoUploadPlugin extends Plugin {
       if (name === "image.png") {
         return "";
       } else {
+        return `${name}${imageSizeSuffix}`;
+      }
+    } else if (this.settings.imageDesc === "picgo-filename") {
+      // Extract filename from the PicGo response URL
+      // The response URL format is like: https://domain.com/20250425194301.png?params
+      if (uploadUrl) {
+        try {
+          // Get the URL path
+          const urlPath = uploadUrl.split('?')[0];
+          // Extract the filename with extension
+          const filenameWithExt = urlPath.split('/').pop() || '';
+          // Remove extension
+          const filenameWithoutExt = filenameWithExt.replace(/\.[^/.]+$/, '');
+          return filenameWithoutExt + imageSizeSuffix;
+        } catch (e) {
+          console.error('Failed to extract filename from URL', e);
+          return `${name}${imageSizeSuffix}`;
+        }
+      } else {
+        // Fallback if uploadUrl is not provided
         return `${name}${imageSizeSuffix}`;
       }
     } else {
