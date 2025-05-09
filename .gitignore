@@ -10,4 +10,5 @@ node_modules
 main.js
 
 # ignore
-data.json
+data.jsondist
+dist
