@@ -305,7 +305,10 @@ export default class imageAutoUploadPlugin extends Plugin {
     const fileMap = arrayToObject(this.app.vault.getFiles(), "name");
     const filePathMap = arrayToObject(this.app.vault.getFiles(), "path");
     let imageList: Image[] = [];
-    const fileArray = this.filterFile(this.helper.getAllFiles());
+    const allFiles = this.helper.getAllFiles();
+    console.log("[image-upload] Found image links in document:", allFiles);
+    const fileArray = this.filterFile(allFiles);
+    console.log("[image-upload] After filtering:", fileArray);
 
     for (const match of fileArray) {
       const imageName = match.name;
@@ -365,10 +368,16 @@ export default class imageAutoUploadPlugin extends Plugin {
               name: imageName,
               source: match.source,
             });
+          } else {
+            console.log("[image-upload] Skipped (not recognized as image):", abstractImageFile);
           }
+        } else {
+          console.log("[image-upload] File not found in vault:", encodedUri);
         }
       }
     }
+
+    console.log("[image-upload] Final image list to upload:", imageList);
 
     if (imageList.length === 0) {
       new Notice(t("Can not find image file"));
@@ -377,7 +386,9 @@ export default class imageAutoUploadPlugin extends Plugin {
       new Notice(`共找到${imageList.length}个图像文件，开始上传`);
     }
 
+    console.log("[image-upload] Starting upload...");
     this.uploader.uploadFiles(imageList.map(item => item.path)).then(res => {
+      console.log("[image-upload] Upload response:", res);
       if (res.success) {
         let uploadUrlList = res.result;
 
