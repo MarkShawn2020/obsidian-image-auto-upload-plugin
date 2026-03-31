@@ -236,7 +236,8 @@ export default class imageAutoUploadPlugin extends Plugin {
         let uploadUrlList = res.result;
         imageList.map(item => {
           const uploadImage = uploadUrlList.shift();
-          let name = this.handleName(item.name, uploadImage);
+          // Preserve original alt text for existing images
+          let name = item.name || this.handleName(item.name, uploadImage);
 
           content = content.replaceAll(
             item.source,
@@ -262,6 +263,9 @@ export default class imageAutoUploadPlugin extends Plugin {
     const imageList: Image[] = [];
 
     for (const match of fileArray) {
+      if (!match.path) {
+        continue;
+      }
       if (match.path.startsWith("http")) {
         if (this.settings.workOnNetWork) {
           if (
@@ -401,7 +405,8 @@ export default class imageAutoUploadPlugin extends Plugin {
         imageList.map(item => {
           const uploadImage = uploadUrlList.shift();
 
-          let name = this.handleName(item.name, uploadImage);
+          // Preserve original alt text for existing images
+          let name = item.name || this.handleName(item.name, uploadImage);
           content = content.replaceAll(
             item.source,
             `![${name}](${uploadImage})`
@@ -465,7 +470,8 @@ export default class imageAutoUploadPlugin extends Plugin {
                     let uploadUrlList = res.result;
                     imageList.map(item => {
                       const uploadImage = uploadUrlList.shift();
-                      let name = this.handleName(item.name, uploadImage);
+                      // Preserve original alt text for existing images
+                      let name = item.name || this.handleName(item.name, uploadImage);
 
                       value = value.replaceAll(
                         item.source,
