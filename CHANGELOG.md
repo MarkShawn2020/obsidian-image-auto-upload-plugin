@@ -1,3 +1,9 @@
+# 4.2.0(2026.03.31)
+
+1. 支持 HEIC 图片格式上传
+2. 修复图片上传后 alt 文本丢失的问题
+3. 修复 HTTP URL 图片链接解析丢失 name/path 的 bug
+
 # 4.1.0(2024.11.28)
 
 1. 修复 ob1.7.5 版本后拖拽时无法上传的 bug [#160](https://github.com/renmu123/obsidian-image-auto-upload-plugin/issues/160)
