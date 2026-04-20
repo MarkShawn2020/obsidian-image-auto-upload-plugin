@@ -12,3 +12,9 @@ main.js
 # ignore
 data.jsondist
 dist
+
+# env
+.env
+
+# macOS
+.DS_Store
